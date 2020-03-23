@@ -28,9 +28,7 @@ def index():
 
 @app.route("/book", methods=["POST"])
 def usuario():
-    """Book a flight."""
 
-    # Get form information.
     name = request.form.get("name")
     try:
         flight_id = int(request.form.get("flight_id"))
