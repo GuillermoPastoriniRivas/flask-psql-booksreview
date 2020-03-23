@@ -26,7 +26,7 @@ def index():
     books = db.execute("SELECT isbn, title FROM books LIMIT 30").fetchall()
     return render_template("index.html", books=books)
 
-@app.route("/book", methods=["POST"])
+@app.route("/singup", methods=["POST"])
 def usuario():
 
     name = request.form.get("name")
