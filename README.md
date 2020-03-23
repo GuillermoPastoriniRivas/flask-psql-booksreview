@@ -1,3 +1,10 @@
-# Project 1
+# Project with Flask, PostgreSQL and Heroku
 
-Web Programming with Python and JavaScript
+Books review
+  - user registration
+  - login, logout
+  - search for a book
+  - book page
+  - review submission
+  - Goodreads.com Review Data API
+  - API Access
