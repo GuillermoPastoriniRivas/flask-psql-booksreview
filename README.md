@@ -4,6 +4,7 @@ Books review
   - user registration
   - login, logout
   - search for a book
+  - pagination
   - book page
   - review submission
   - Goodreads.com Review Data API
