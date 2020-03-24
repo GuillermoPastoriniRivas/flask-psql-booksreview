@@ -2,8 +2,14 @@
 <html>
     <head>
         <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <div class="topnav">
+            <a href="/">Home</a>
+            <a href="login">Log In</a>
+            <a href="signup">Sign Up</a>
+          </div>
         <div class="container">
             {% block body %}
             {% endblock %}

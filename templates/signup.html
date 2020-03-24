@@ -1,20 +1,11 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Books
+    Sing up
 {% endblock %}
 
 {% block body %}
-
-    <h1>Books List</h1>
-    <ul>
-        
-        {% for book in books %}
-            <li>
-                {{ book.title }} numero {{ book.isbn }}
-            </li>
-        {% endfor %}
-    </ul>
+    <h1>Sing Up </h1>
     <form action="{{ url_for('login') }}" method="post">
         <div class="container">
             <label for="uname"><b>Username</b></label>
