@@ -7,10 +7,11 @@
 {% block body %}
 <h1>Books List, Hi {{ name }}</h1>
 <ul>
-    
     {% for book in books %}
         <li>
-            {{ book.title }} numero {{ book.isbn }}
+            <a href="{{url_for('book', book_id=book.id)}}">
+                {{ book.title }}
+            </a>
         </li>
     {% endfor %}
 </ul>

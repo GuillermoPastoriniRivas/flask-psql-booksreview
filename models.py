@@ -6,7 +6,7 @@ from flask_login import UserMixin
 
 db = SQLAlchemy()
 
-class usuario(db.Model, UserMixin):
+class Usuario(db.Model, UserMixin):
 
     __tablename__ = 'usuario'
 
@@ -15,7 +15,7 @@ class usuario(db.Model, UserMixin):
     username = db.Column(db.String(16), unique=True, nullable=False)
     password = db.Column(db.String(16), nullable=False)
 
-class book(db.Model, UserMixin):
+class Book(db.Model):
 
     __tablename__ = "books"
 
@@ -24,3 +24,13 @@ class book(db.Model, UserMixin):
     title = db.Column(db.String(16), nullable=False)
     author = db.Column(db.String(16), nullable=False)
     publicationyear = db.Column(db.Integer, nullable=False)
+
+class Review(db.Model):
+
+    __tablename__ = "reviews"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("usuario.id"), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey("books.id"), nullable=False)
+    rating = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(256), nullable=True)

@@ -13,11 +13,11 @@ login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return usuario.query.get(int(user_id))
+    return Usuario.query.get(int(user_id))
 
 @app.route("/")
 def index():
-    books = book.query.limit(10).all()
+    books = Book.query.limit(10).all()
     return render_template("index.html", books=books)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -32,7 +32,7 @@ def login():
         psw = request.form.get("password")
 
         # Make sure the user and password are correct.
-        user = usuario.query.filter_by(username=name, password=psw).first()
+        user = Usuario.query.filter_by(username=name, password=psw).first()
         if not user:
             return render_template("login.html", message="Invalid username or password ")
         login_user(user)
@@ -50,22 +50,34 @@ def signup():
         psw = request.form.get("password")
        
         # Make sure the user exists.
-        user = usuario.query.filter_by(username=username).first()
+        user = Usuario.query.filter_by(username=username).first()
         if user:
             return render_template("error.html", message="Username already exists")
-        nuevo = usuario(name=name.capitalize(), username=username, password=psw)
+        nuevo = Usuario(name=name.capitalize(), username=username, password=psw)
         db.session.add(nuevo)   
         db.session.commit()
-        return redirect(url_for('login'))
-
-@app.route("/books")
-@login_required
-def books():
-    books = book.query.limit(30).all()
-    return render_template("books.html", books=books, name = current_user.name)
+        login_user(nuevo)
+        return redirect(url_for('books'))
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
+
+@app.route("/books")
+@login_required
+def books():
+    books = Book.query.limit(30).all()
+    return render_template("books.html", books=books, name = current_user.name)
+
+@app.route("/books/<int:book_id>")
+@login_required
+def book(book_id):
+    libro = Book.query.get(book_id)
+    if libro is None:
+        return render_template("error.html", message="No such book.")
+
+    # Get all passengers.
+    reviews = Review.query.filter_by(book_id=book_id).all()
+    return render_template("book.html", book=libro, reviews=reviews, name = current_user.name)
