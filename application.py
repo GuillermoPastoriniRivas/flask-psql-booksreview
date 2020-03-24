@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from models import *
 
@@ -20,49 +20,46 @@ def index():
     books = book.query.limit(30).all()
     return render_template("index.html", books=books)
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    
-    return render_template("login.html")
+
+    if request.method == 'GET':
+        return render_template("login.html")
+
+    if request.method == 'POST':
+         # Get form information.
+        name = request.form.get("username")
+        psw = request.form.get("password")
+
+        # Make sure the user and password are correct.
+        user = usuario.query.filter_by(username=name, password=psw).first()
+        if not user:
+            return render_template("login.html", message="Invalid username or password ")
+        login_user(user)
+        return redirect(url_for('books'))
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == 'GET':
         return render_template("signup.html")
-        
+
     if request.method == 'POST':
             # Get form information.
-        nameusuario = request.form.get("name") 
-        name = request.form.get("username")
+        name = request.form.get("name") 
+        username = request.form.get("username")
         psw = request.form.get("password")
-        try:
-            username = str(request.form.get("username"))
-        except ValueError:
-            return render_template("error.html", message="Enter an username.")
-
+       
         # Make sure the user exists.
-        user = usuario.query.filter_by(username=name).first()
+        user = usuario.query.filter_by(username=username).first()
         if user:
             return render_template("error.html", message="Username already exists")
-        nuevo = usuario(name=nameusuario, username=name, password=psw)
+        nuevo = usuario(name=name, username=username, password=psw)
         db.session.add(nuevo)   
         db.session.commit()
-        return render_template("success.html")
+        return redirect(url_for('login'))
 
-@app.route("/books", methods=["POST"])
+@app.route("/books")
+@login_required
 def books():
-    # Get form information.
-    name = request.form.get("username")
-    psw = request.form.get("password")
-    try:
-        username = str(request.form.get("username"))
-    except ValueError:
-        return render_template("error.html", message="Enter an username.")
-
-    # Make sure the user exists.
-    user = usuario.query.filter_by(username=name, password=psw).first()
-    if not user:
-        return render_template("error.html", message="Invalid username or password ")
-    login_user(user)
     books = book.query.limit(30).all()
     return render_template("books.html", books=books, name = current_user.name)
