@@ -25,14 +25,32 @@ def login():
     
     return render_template("login.html")
 
-@app.route("/signup")
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    return render_template("signup.html")
+    if request.method == 'GET':
+        return render_template("signup.html")
+        
+    if request.method == 'POST':
+            # Get form information.
+        nameusuario = request.form.get("name") 
+        name = request.form.get("username")
+        psw = request.form.get("password")
+        try:
+            username = str(request.form.get("username"))
+        except ValueError:
+            return render_template("error.html", message="Enter an username.")
 
+        # Make sure the user exists.
+        user = usuario.query.filter_by(username=name).first()
+        if user:
+            return render_template("error.html", message="Username already exists")
+        nuevo = usuario(name=nameusuario, username=name, password=psw)
+        db.session.add(nuevo)   
+        db.session.commit()
+        return render_template("success.html")
 
-@app.route("/books")
+@app.route("/books", methods=["POST"])
 def books():
-
     # Get form information.
     name = request.form.get("username")
     psw = request.form.get("password")
@@ -45,6 +63,6 @@ def books():
     user = usuario.query.filter_by(username=name, password=psw).first()
     if not user:
         return render_template("error.html", message="Invalid username or password ")
-
     login_user(user)
-    return render_template("books.html")
+    books = book.query.limit(30).all()
+    return render_template("books.html", books=books, name = current_user.name)

@@ -5,6 +5,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Books</h1>
+<h1>Books List, Hi {{ name }}</h1>
+<ul>
+    
+    {% for book in books %}
+        <li>
+            {{ book.title }} numero {{ book.isbn }}
+        </li>
+    {% endfor %}
+</ul>
    
 {% endblock %}
