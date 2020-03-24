@@ -18,11 +18,27 @@
     <h2>Reviews</h2>
     <ul>
         {% for review in reviews %}
-            <li>{{ review.rating }}</li>
-            <li>{{ review.description }}</li>
+            <li>{{ review.rating }} {{ review.description }}</li>
         {% else %}
             <li>No Reviews.</li>
         {% endfor %}
     </ul>
    
+    <form action="{{url_for('book', book_id=book.id)}}" method="post">
+        <div class="container">
+            <h3>Write a review</h3>
+            <label for="description"><b>Review</b></label>
+            <select class="form-control" name="rating">
+                {% for num in range(5) %}
+                    <option value="{{ num + 1}}">{{ num + 1 }}</option>
+                {% endfor %}
+            </select>
+        
+            <label for="description"><b>Description</b></label>
+            <input type="text" placeholder="Enter an opinion" name="description" required>
+        
+            <button type="submit">Comment</button>
+
+          </div>
+    </form>
 {% endblock %}

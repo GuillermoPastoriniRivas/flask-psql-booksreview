@@ -71,13 +71,23 @@ def books():
     books = Book.query.limit(30).all()
     return render_template("books.html", books=books, name = current_user.name)
 
-@app.route("/books/<int:book_id>")
+@app.route("/books/<int:book_id>", methods=["GET", "POST"])
 @login_required
 def book(book_id):
     libro = Book.query.get(book_id)
     if libro is None:
         return render_template("error.html", message="No such book.")
+    if request.method == 'GET':
+        pass
 
-    # Get all passengers.
+    if request.method == 'POST':
+        # Make sure the user no comments before.
+        rev = Review.query.filter_by(user_id=current_user.id).first()
+        if rev:
+            return render_template("error.html", message="Username already have a comment")
+        rating = request.form.get("rating") 
+        description = request.form.get("description") 
+        libro.add_review(rating, description, current_user.id)
+
     reviews = Review.query.filter_by(book_id=book_id).all()
     return render_template("book.html", book=libro, reviews=reviews, name = current_user.name)

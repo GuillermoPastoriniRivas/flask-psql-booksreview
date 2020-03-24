@@ -25,6 +25,11 @@ class Book(db.Model):
     author = db.Column(db.String(16), nullable=False)
     publicationyear = db.Column(db.Integer, nullable=False)
 
+    def add_review(self, rating, description, user_id):
+        b = Review(rating=rating, description=description, book_id=self.id, user_id=user_id)
+        db.session.add(b)
+        db.session.commit()
+
 class Review(db.Model):
 
     __tablename__ = "reviews"
