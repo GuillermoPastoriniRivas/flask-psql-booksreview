@@ -17,7 +17,7 @@ def load_user(user_id):
 
 @app.route("/")
 def index():
-    books = book.query.limit(30).all()
+    books = book.query.limit(10).all()
     return render_template("index.html", books=books)
 
 @app.route("/login", methods=["GET", "POST"])
@@ -53,7 +53,7 @@ def signup():
         user = usuario.query.filter_by(username=username).first()
         if user:
             return render_template("error.html", message="Username already exists")
-        nuevo = usuario(name=name, username=username, password=psw)
+        nuevo = usuario(name=name.capitalize(), username=username, password=psw)
         db.session.add(nuevo)   
         db.session.commit()
         return redirect(url_for('login'))
@@ -63,3 +63,9 @@ def signup():
 def books():
     books = book.query.limit(30).all()
     return render_template("books.html", books=books, name = current_user.name)
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
