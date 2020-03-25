@@ -6,14 +6,35 @@
 
 {% block body %}
 <h1>Books List, Hi {{ name }}</h1>
-<ul>
+
+<form action="{{ url_for('books') }}" method="post">
+    <div class="container">
+        <label for="search"><b>Search by Title, ISBN or Author: </b></label>
+        <input type="text" placeholder="Search..." name="search" required>
+        <button type="submit">Search</button>
+      </div>
+</form>
+<table>
+    <tr>
+        <td>ISBN</td>
+        <td>Title</td>
+        <td>Author</td>
+    </tr>
     {% for book in books %}
-        <li>
-            <a href="{{url_for('book', book_id=book.id)}}">
-                {{ book.title }}
-            </a>
-        </li>
+    
+    <tr>
+        
+        <td>{{ book.isbn }}</td>
+        <td>{{ book.title }}</td>
+        <td>{{ book.author }}</td>
+        <td><a href="{{url_for('book', book_id=book.id)}}"><button type="button" class="btn">Details</button></a></td>
+    
+    </tr>
+    
+    {% else %}
+        {{ message }}
     {% endfor %}
-</ul>
+</table>
+
    
 {% endblock %}

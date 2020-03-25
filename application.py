@@ -65,10 +65,16 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/books")
+@app.route("/books", methods=["GET", "POST"])
 @login_required
 def books():
-    books = Book.query.limit(30).all()
+    if request.method == 'POST':
+        search = request.form.get("search") 
+        books = Book.query.filter(Book.title.like(f"%{search}%") | Book.author.like(f"%{search}%") | Book.isbn.like(f"%{search}%")).all()
+        if not books:
+            return render_template("books.html", message="Book not found", name = current_user.name)
+    if  request.method == 'GET':
+        books = Book.query.limit(30).all()
     return render_template("books.html", books=books, name = current_user.name)
 
 @app.route("/books/<int:book_id>", methods=["GET", "POST"])
@@ -77,14 +83,12 @@ def book(book_id):
     libro = Book.query.get(book_id)
     if libro is None:
         return render_template("error.html", message="No such book.")
-    if request.method == 'GET':
-        pass
 
     if request.method == 'POST':
         # Make sure the user no comments before.
-        rev = Review.query.filter_by(user_id=current_user.id).first()
+        rev = Review.query.filter_by(user_id=current_user.id, book_id=book_id).first()
         if rev:
-            return render_template("error.html", message="Username already have a comment")
+            return render_template("error.html", message="You already commented this post")
         rating = request.form.get("rating") 
         description = request.form.get("description") 
         libro.add_review(rating, description, current_user.id)
